@@ -6,9 +6,9 @@ using System.Security.Policy;
 
 namespace Alpha_s_Downloader
 {
-    public partial class Form1 : Form
+    public partial class main_Form : Form
     {
-        public Form1()
+        public main_Form()
         {
             InitializeComponent();
 

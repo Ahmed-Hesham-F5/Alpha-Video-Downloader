@@ -10,7 +10,7 @@ namespace Alpha_s_Downloader
 {
     public static class dependencies
     {
-        public static async Task validate_dependencies(Form1 form1)
+        public static async Task validate_dependencies(main_Form form1)
         {
             form1.dowload_btn.Enabled = false;
             form1.search_button.Enabled = false;
@@ -55,7 +55,7 @@ namespace Alpha_s_Downloader
             }
         }
 
-        private static async Task validate_youtube_dl(Form1 form1)
+        private static async Task validate_youtube_dl(main_Form form1)
         {
             string file_path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\yt-dlp.exe";
             if (File.Exists(file_path))
@@ -84,7 +84,7 @@ namespace Alpha_s_Downloader
             await DownloadFileAsync(fileUrl, savePath);
         }
 
-        private static async Task validate_ffmpeg(Form1 form1)
+        private static async Task validate_ffmpeg(main_Form form1)
         {
             string file_path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\ffmpeg.exe";
             if (File.Exists(file_path))

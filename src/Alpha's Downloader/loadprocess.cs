@@ -60,7 +60,7 @@ namespace Alpha_s_Downloader
                         qualities = default_quality
 
                     };
-                    if (!Form1.is_youtubeplaylist && !url.StartsWith(@"https://www.youtube.com/playlist"))
+                    if (!main_Form.is_youtubeplaylist && !url.StartsWith(@"https://www.youtube.com/playlist"))
                     {
                         videoDetails.link=url;
                     }

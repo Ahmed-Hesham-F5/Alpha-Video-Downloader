@@ -1,6 +1,6 @@
 ﻿namespace Alpha_s_Downloader
 {
-    partial class Form1
+    partial class main_Form
     {
         /// <summary>
         ///  Required designer variable.
@@ -155,7 +155,7 @@
             made_by_label.Text = "Made by: https://github.com/Ahmed-Hesham-F5";
             made_by_label.Click += made_by_label_Click;
             // 
-            // Form1
+            // main_Form
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -173,7 +173,7 @@
             Controls.Add(search_button);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
-            Name = "Form1";
+            Name = "main_Form";
             Text = "Video downloader";
             Load += Form1_Load;
             Shown += Form1_Shown;
