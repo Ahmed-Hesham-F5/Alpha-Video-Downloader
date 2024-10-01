@@ -28,11 +28,12 @@ namespace Alpha_s_Downloader
         {
             using (HttpClient client = new HttpClient())
             {
+                client.Timeout = TimeSpan.FromHours(1); 
                 // Send a GET request to the specified URL
                 using (HttpResponseMessage response = await client.GetAsync(url))
                 {
                     response.EnsureSuccessStatusCode(); // Throw if not a success code.
-
+                                                         
                     // Read the response content and write it to a file
                     using (Stream contentStream = await response.Content.ReadAsStreamAsync(),
                                   fileStream = new FileStream(savePath, FileMode.Create, FileAccess.Write, FileShare.None))
