@@ -34,7 +34,7 @@ Alpha Video Downloader is a Windows Forms application built in C# that allows us
 
 
 ### From Release
-1. Go to the [Releases]([https://github.com/yt-dlp/yt-dl](https://github.com/Ahmed-Hesham-F5/Alpha-Video-Downloader/releases)) page of the repository.
+1. Go to the [Releases](https://github.com/Ahmed-Hesham-F5/Alpha-Video-Downloader/releases) page of the repository.
 2. Download the latest release package (usually a .zip file).
 3. Extract the contents of the downloaded file.
 4. Navigate to the extracted folder and run the setup.exe file to setup and run the application
