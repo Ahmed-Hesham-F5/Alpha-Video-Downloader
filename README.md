@@ -20,4 +20,4 @@ Alpha Video Downloader is a Windows Forms application built in C# that allows us
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/AlphaVideoDownloader.git
+   git clone https://github.com/Ahmed-Hesham-F5/Alpha-Video-Downloader
