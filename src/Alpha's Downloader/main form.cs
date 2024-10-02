@@ -1,6 +1,7 @@
 using ConsoleApp1;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing.Text;
 using System.Reflection;
 using System.Security.Policy;
 
@@ -31,37 +32,47 @@ namespace Alpha_s_Downloader
             default_quality_combobox.SelectedIndex = 5;
 
         }
+       private void clear_grid_view()
+        {
+            dataGridView1.DataSource = null;       // Clear old DataSource
+            dataGridView1.Rows.Clear();            // Clear any existing rows
+            dataGridView1.Columns.Clear();         // Clear any existing columns      // Clear any existing columns
+            dataGridView1.AllowUserToAddRows = false;
 
+            list.Clear();  // This will also clear the DataGridView
+        }
 
         BindingList<VideoDetails> list = new BindingList<VideoDetails>();
         private async void search_btn_Click(object sender, EventArgs e)
         {
+
+            CancellationTokenSource cts = new CancellationTokenSource();
+            CancellationToken token = cts.Token;
+            Button cancel_search_button = new Button()
+            {
+                Font = search_button.Font,
+                Location = search_button.Location,
+                Name = search_button.Name,
+                Size = new Size(85, 60),
+                TabIndex = search_button.TabIndex,
+                Text = "Cancel search"
+            };
+
+             cancel_search_button.Click += (s, e) => cts.Cancel();
+            this.Controls.Remove(search_button);
+            this.Controls.Add(cancel_search_button);
+            //  search_button.Visible = false;
             try
             {
-
-                search_button.Enabled = false;
                 dowload_btn.Enabled = false;
                 var url = URL_Box.Text;
-
-                dataGridView1.DataSource = null;       // Clear old DataSource
-                dataGridView1.Rows.Clear();            // Clear any existing rows
-                dataGridView1.Columns.Clear();         // Clear any existing columns      // Clear any existing columns
-                dataGridView1.AllowUserToAddRows = false;
-
-                list.Clear();  // This will also clear the DataGridView
-
+                clear_grid_view();
 
                 wait_label.Text = "Searching... please wait";
-                list = await Task.Run(() => loadprocess.load_playlist(url));
-                wait_label.Text = "";
+                list = await loadprocess.load_playlist(url, token);
                 if (list.Count == 0)
-                {
-
-                    search_button.Enabled = true;
-                    dowload_btn.Enabled = true;
-                    return;
-                }
-
+                    throw new Exception("found nothing");
+                
 
                 dataGridView1.AutoGenerateColumns = false;
 
@@ -117,11 +128,23 @@ namespace Alpha_s_Downloader
                     dataGridView1.Rows[i].Height = 120;
                 }
 
-                search_button.Enabled = true;
-                dowload_btn.Enabled = true;
+            }
+            catch (OperationCanceledException ex)
+            {
+
             }
             catch (Exception ex) {
-                MessageBox.Show(ex.Message);
+
+                // Handle any other exceptions that might occur during the downloads
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                clear_grid_view(); 
+            }
+            finally
+            {
+                this.Controls.Add(search_button);
+                this.Controls.Remove(cancel_search_button);
+                dowload_btn.Enabled = true;
+                wait_label.Text = "";
             }
 
         }
@@ -173,12 +196,7 @@ namespace Alpha_s_Downloader
 
                     wait_label.Text = "";
                     MessageBox.Show("Download completed.");
-                    dataGridView1.DataSource = null;       // Clear old DataSource
-                    dataGridView1.Rows.Clear();            // Clear any existing rows
-                    dataGridView1.Columns.Clear();         // Clear any existing columns      // Clear any existing columns
-                    dataGridView1.AllowUserToAddRows = false;
-
-                    list.Clear();  // This will also clear the DataGridView
+                    clear_grid_view();
                 }
                 else
                 {
@@ -188,8 +206,8 @@ namespace Alpha_s_Downloader
                 search_button.Enabled = true;
                 dowload_btn.Enabled = true;
             }
-            catch (Exception ex) { 
-                    MessageBox.Show(ex.Message);
+            catch (Exception ex) {
+                MessageBox.Show(ex.Message);
             }
         }
         public static bool is_youtubeplaylist = false;

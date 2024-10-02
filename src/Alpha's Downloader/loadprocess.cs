@@ -7,14 +7,24 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.WebRequestMethods;
 
 namespace Alpha_s_Downloader
 {
     public class loadprocess
     {
         public static string default_quality="720p";
-       public static async Task<BindingList<VideoDetails>> load_playlist(string url)
-        {
+       public static async Task<BindingList<VideoDetails>> load_playlist(string url, CancellationToken token)
+       {
+            if (url.StartsWith(@"https://www.youtube.com/watch?v="))
+            {
+               string newurl = "";
+                foreach(var ch in url){
+                    if (ch == '&') break;
+                    newurl += ch; 
+                }    
+                url = newurl;   
+            }
             BindingList<VideoDetails> list = new BindingList<VideoDetails>();
 
             var arguments = $"--get-title --get-id {url}";
@@ -38,15 +48,26 @@ namespace Alpha_s_Downloader
 
 
             //            processInfo.Verb = "runas";
-            var process = new Process { StartInfo = processInfo };
-
-            try
+            using (Process process = new Process { StartInfo = processInfo, EnableRaisingEvents = true })
             {
                 process.Start();
-                string output = await process.StandardOutput.ReadToEndAsync();
-                string error = await process.StandardError.ReadToEndAsync();
-                await process.WaitForExitAsync();
+                token.Register(() =>
+                {
+                    if (!process.HasExited)
+                    {
+                        process.Kill(); // Kill the process if it's still running
+                    }
+                });
+                string output = await process.StandardOutput.ReadToEndAsync(token);
+                string error = await process.StandardError.ReadToEndAsync(token);
+                await process.WaitForExitAsync(token);
                 //  Console.WriteLine(output);
+
+                if (token.IsCancellationRequested)
+                {
+                    throw new OperationCanceledException(token);
+                }
+
                 string[] videoIds = output.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
 
@@ -60,22 +81,14 @@ namespace Alpha_s_Downloader
                         qualities = default_quality
 
                     };
-                    if (!main_Form.is_youtubeplaylist && !url.StartsWith(@"https://www.youtube.com/playlist"))
+                    if (!main_Form.is_youtubeplaylist && !url.StartsWith(@"https://www.youtube.com/playlist") && !url.StartsWith(@"https://youtube.com/playlist"))
                     {
-                        videoDetails.link=url;
+                        videoDetails.link = url;
                     }
 
                     list.Add(videoDetails);
                 }
-
-
             }
-            catch (System.Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-
-            }
-
             return list;
         }
     }
